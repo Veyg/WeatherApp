@@ -2,6 +2,7 @@ digraph "com.weatherapp:demo:jar:1.0" {
 	"com.weatherapp:demo:jar:1.0" -> "junit:junit:jar:4.11:test" ; 
 	"com.weatherapp:demo:jar:1.0" -> "org.apache.httpcomponents:httpclient:jar:4.5.13:compile" ; 
 	"com.weatherapp:demo:jar:1.0" -> "com.fasterxml.jackson.core:jackson-databind:jar:2.15.2:compile" ; 
+	"com.weatherapp:demo:jar:1.0" -> "com.googlecode.json-simple:json-simple:jar:1.1.1:compile" ; 
 	"junit:junit:jar:4.11:test" -> "org.hamcrest:hamcrest-core:jar:1.3:test" ; 
 	"org.apache.httpcomponents:httpclient:jar:4.5.13:compile" -> "org.apache.httpcomponents:httpcore:jar:4.4.13:compile" ; 
 	"org.apache.httpcomponents:httpclient:jar:4.5.13:compile" -> "commons-logging:commons-logging:jar:1.2:compile" ; 

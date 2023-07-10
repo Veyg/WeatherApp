@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+
+<GridPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0" fx:controller="com.weatherapp.WeatherApp"
+          hgap="10" vgap="10" alignment="center" styleClass="root">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20" />
+    </padding>
+
+    <VBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0">
+        <TextField fx:id="cityInput" promptText="Enter City" styleClass="text-field"/>
+        <Button fx:id="fetchButton" text="Get Weather" onAction="#fetchWeather" styleClass="button"/>
+        <ProgressBar fx:id="progressBar" visible="false" styleClass="progress-bar"/>
+    </VBox>
+
+    <VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
+        <Label fx:id="temperatureOutput" styleClass="label" />
+        <Label fx:id="humidityOutput" styleClass="label" />
+        <Label fx:id="pressureOutput" styleClass="label" />
+        <Label fx:id="windSpeedOutput" styleClass="label" />
+        <Label fx:id="sunriseOutput" styleClass="label" />
+        <Label fx:id="sunsetOutput" styleClass="label" />
+        <Label fx:id="weatherDescriptionOutput" styleClass="label" />
+    </VBox>
+</GridPane>

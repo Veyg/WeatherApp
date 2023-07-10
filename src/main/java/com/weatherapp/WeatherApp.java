@@ -16,7 +16,7 @@ import org.json.simple.parser.ParseException;
 public class WeatherApp {
     private static String API_KEY;
 
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException {
         loadProperties();
 
         Scanner scanner = new Scanner(System.in);
@@ -29,7 +29,7 @@ public class WeatherApp {
             }
             try {
                 getWeather(city);
-            } catch (IOException | ParseException e) {
+            } catch (IOException e) {
                 System.out.println("Unable to retrieve weather data. Check if the city is correct.");
             }
         }
@@ -47,7 +47,7 @@ public class WeatherApp {
         }
     }
 
-    public static void getWeather(String city) throws IOException, ParseException {
+    public static void getWeather(String city) throws IOException {
         String url = String.format("http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&appid=%s", city, API_KEY);
 
         CloseableHttpClient client = HttpClients.createDefault();
@@ -60,18 +60,25 @@ public class WeatherApp {
             String responseBody = EntityUtils.toString(response.getEntity());
             JSONObject jsonObject = (JSONObject) parser.parse(responseBody);
             
-            String cityName = (String) jsonObject.get("name");
-            JSONObject main = (JSONObject) jsonObject.get("main");
-            Double temperature = (Double) main.get("temp");
-            Double feelsLike = (Double) main.get("feels_like");
-            Long humidity = (Long) main.get("humidity");
-            Long pressure = (Long) main.get("pressure");
+            if (jsonObject.get("cod").equals(200L)) {
+                String cityName = (String) jsonObject.get("name");
+                JSONObject main = (JSONObject) jsonObject.get("main");
+                Double temperature = ((Number) main.get("temp")).doubleValue();
+                Double feelsLike = ((Number) main.get("feels_like")).doubleValue();
+                Long humidity = ((Number) main.get("humidity")).longValue();
+                Long pressure = ((Number) main.get("pressure")).longValue();
 
-            System.out.println("City: " + cityName);
-            System.out.println("Temperature: " + temperature);
-            System.out.println("Feels Like: " + feelsLike);
-            System.out.println("Humidity: " + humidity);
-            System.out.println("Pressure: " + pressure);
+                System.out.println("City: " + cityName);
+                System.out.println("Temperature: " + temperature);
+                System.out.println("Feels Like: " + feelsLike);
+                System.out.println("Humidity: " + humidity);
+                System.out.println("Pressure: " + pressure);
+            } else {
+                System.out.println("Error: " + jsonObject.get("message"));
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
         } finally {
             response.close();
         }

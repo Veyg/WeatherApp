@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -21,16 +22,27 @@ public class WeatherApp {
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("Enter a city name (or 'quit' to exit): ");
-            String city = scanner.nextLine();
+            System.out.println("Enter a city name or 'coord' for coordinates or 'quit' to exit: ");
+            String input = scanner.nextLine();
 
-            if (city.equalsIgnoreCase("quit")) {
+            if (input.equalsIgnoreCase("quit")) {
                 break;
-            }
-            try {
-                getWeather(city);
-            } catch (IOException e) {
-                System.out.println("Unable to retrieve weather data. Check if the city is correct.");
+            } else if (input.equalsIgnoreCase("coord")) {
+                System.out.println("Enter latitude: ");
+                String lat = scanner.nextLine();
+                System.out.println("Enter longitude: ");
+                String lon = scanner.nextLine();
+                try {
+                    getWeatherByCoordinates(lat, lon);
+                } catch (IOException e) {
+                    System.out.println("Unable to retrieve weather data. Check if the coordinates are correct.");
+                }
+            } else {
+                try {
+                    getWeatherByCityName(input);
+                } catch (IOException e) {
+                    System.out.println("Unable to retrieve weather data. Check if the city is correct.");
+                }
             }
         }
         scanner.close();
@@ -47,9 +59,17 @@ public class WeatherApp {
         }
     }
 
-    public static void getWeather(String city) throws IOException {
+    public static void getWeatherByCityName(String city) throws IOException {
         String url = String.format("http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&appid=%s", city, API_KEY);
+        getWeather(url);
+    }
 
+    public static void getWeatherByCoordinates(String lat, String lon) throws IOException {
+        String url = String.format("http://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&units=metric&appid=%s", lat, lon, API_KEY);
+        getWeather(url);
+    }
+
+    public static void getWeather(String url) throws IOException {
         CloseableHttpClient client = HttpClients.createDefault();
         HttpGet request = new HttpGet(url);
         CloseableHttpResponse response = client.execute(request);
@@ -57,27 +77,44 @@ public class WeatherApp {
         JSONParser parser = new JSONParser();
 
         try {
-            String responseBody = EntityUtils.toString(response.getEntity());
-            JSONObject jsonObject = (JSONObject) parser.parse(responseBody);
-            
-            if (jsonObject.get("cod").equals(200L)) {
-                String cityName = (String) jsonObject.get("name");
-                JSONObject main = (JSONObject) jsonObject.get("main");
-                Double temperature = ((Number) main.get("temp")).doubleValue();
-                Double feelsLike = ((Number) main.get("feels_like")).doubleValue();
-                Long humidity = ((Number) main.get("humidity")).longValue();
-                Long pressure = ((Number) main.get("pressure")).longValue();
-
-                System.out.println("City: " + cityName);
-                System.out.println("Temperature: " + temperature);
-                System.out.println("Feels Like: " + feelsLike);
-                System.out.println("Humidity: " + humidity);
-                System.out.println("Pressure: " + pressure);
-            } else {
-                System.out.println("Error: " + jsonObject.get("message"));
+            if (response.getStatusLine().getStatusCode() != 200) {
+                System.out.println("An error occurred: " + response.getStatusLine().getReasonPhrase());
+                return;
             }
 
+            String responseBody = EntityUtils.toString(response.getEntity());
+            JSONObject jsonObject = (JSONObject) parser.parse(responseBody);
+
+            String cityName = (String) jsonObject.get("name");
+            JSONObject main = (JSONObject) jsonObject.get("main");
+            Double temperature = ((Number) main.get("temp")).doubleValue();
+            Double feelsLike = ((Number) main.get("feels_like")).doubleValue();
+            Long humidity = ((Number) main.get("humidity")).longValue();
+            Long pressure = ((Number) main.get("pressure")).longValue();
+
+            JSONObject wind = (JSONObject) jsonObject.get("wind");
+            Double windSpeed = ((Number) wind.get("speed")).doubleValue();
+
+            JSONObject sys = (JSONObject) jsonObject.get("sys");
+            Long sunrise = ((Number) sys.get("sunrise")).longValue();
+            Long sunset = ((Number) sys.get("sunset")).longValue();
+
+            JSONArray weatherArray = (JSONArray) jsonObject.get("weather");
+            JSONObject weather = (JSONObject) weatherArray.get(0);
+            String weatherDescription = (String) weather.get("description");
+
+            System.out.println("City: " + cityName);
+            System.out.println("Temperature: " + temperature);
+            System.out.println("Feels Like: " + feelsLike);
+            System.out.println("Humidity: " + humidity);
+            System.out.println("Pressure: " + pressure);
+            System.out.println("Wind Speed: " + windSpeed);
+            System.out.println("Sunrise: " + sunrise);
+            System.out.println("Sunset: " + sunset);
+            System.out.println("Weather: " + weatherDescription);
+
         } catch (ParseException e) {
+            System.out.println("An error occurred while parsing the API response. Please try again.");
             e.printStackTrace();
         } finally {
             response.close();

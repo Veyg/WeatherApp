@@ -3,7 +3,10 @@ package com.weatherapp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.Scanner;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -14,38 +17,20 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class WeatherApp {
+public class WeatherApp extends Application {
     private static String API_KEY;
 
-    public static void main(String[] args) throws IOException {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
         loadProperties();
+        VBox vbox = new VBox();
+        Scene scene = new Scene(vbox, 400, 200);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            System.out.println("Enter a city name or 'coord' for coordinates or 'quit' to exit: ");
-            String input = scanner.nextLine();
-
-            if (input.equalsIgnoreCase("quit")) {
-                break;
-            } else if (input.equalsIgnoreCase("coord")) {
-                System.out.println("Enter latitude: ");
-                String lat = scanner.nextLine();
-                System.out.println("Enter longitude: ");
-                String lon = scanner.nextLine();
-                try {
-                    getWeatherByCoordinates(lat, lon);
-                } catch (IOException e) {
-                    System.out.println("Unable to retrieve weather data. Check if the coordinates are correct.");
-                }
-            } else {
-                try {
-                    getWeatherByCityName(input);
-                } catch (IOException e) {
-                    System.out.println("Unable to retrieve weather data. Check if the city is correct.");
-                }
-            }
-        }
-        scanner.close();
+    public static void main(String[] args) {
+        launch(args);
     }
 
     private static void loadProperties() throws IOException {

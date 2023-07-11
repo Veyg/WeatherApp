@@ -5,28 +5,63 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0" fx:controller="com.weatherapp.WeatherApp"
-          hgap="10" vgap="10" alignment="center" styleClass="root">
+<GridPane alignment="center" hgap="10" styleClass="root" vgap="10" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.weatherapp.WeatherApp">
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20" />
+        <Insets bottom="20" left="20" right="20" top="20" />
     </padding>
+    
+    <columnConstraints>
+        <ColumnConstraints />
+        <ColumnConstraints />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints />
+        <RowConstraints />
+    </rowConstraints>
 
-    <VBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0">
-        <TextField fx:id="cityInput" promptText="Enter City" styleClass="text-field"/>
-        <Button fx:id="fetchButton" text="Get Weather" onAction="#fetchWeather" styleClass="button"/>
-        <ProgressBar fx:id="progressBar" visible="false" styleClass="progress-bar"/>
+    <VBox spacing="10" styleClass="vbox" GridPane.columnIndex="0" GridPane.rowIndex="0">
+        <TextField fx:id="cityInput" prefWidth="400" promptText="Enter City" styleClass="text-field" />
+        <Button fx:id="fetchButton" onAction="#fetchWeather" styleClass="button" text="🔍 Get Weather" />
+        <ProgressBar fx:id="progressBar" prefWidth="400" styleClass="progress-bar" visible="false" />
     </VBox>
 
-    <VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
-        <Label fx:id="temperatureOutput" styleClass="label" />
-        <Label fx:id="humidityOutput" styleClass="label" />
-        <Label fx:id="pressureOutput" styleClass="label" />
-        <Label fx:id="windSpeedOutput" styleClass="label" />
-        <Label fx:id="sunriseOutput" styleClass="label" />
-        <Label fx:id="sunsetOutput" styleClass="label" />
-        <Label fx:id="weatherDescriptionOutput" styleClass="label" />
-    </VBox>
+    <GridPane hgap="10" vgap="10" GridPane.columnIndex="0" GridPane.rowIndex="1">
+        <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+        </rowConstraints>
+
+        <ImageView fx:id="weatherIcon" fitHeight="200.0" fitWidth="118.0" preserveRatio="true" styleClass="weather-icon" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="2" />
+
+        <VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <Label styleClass="label" text="Temperature:" />
+            <Label styleClass="label" text="Humidity:" />
+            <Label styleClass="label" text="Pressure:" />
+            <Label styleClass="label" text="Wind Speed:" />
+            <Label styleClass="label" text="Sunrise:" />
+            <Label styleClass="label" text="Sunset:" />
+            <Label styleClass="label" text="Description:" />
+        </VBox>
+
+        <VBox spacing="10" GridPane.columnIndex="2" GridPane.rowIndex="0">
+            <Label fx:id="temperatureOutput" styleClass="label" />
+            <Label fx:id="humidityOutput" styleClass="label" />
+            <Label fx:id="pressureOutput" styleClass="label" />
+            <Label fx:id="windSpeedOutput" styleClass="label" />
+            <Label fx:id="sunriseOutput" styleClass="label" />
+            <Label fx:id="sunsetOutput" styleClass="label" />
+            <Label fx:id="weatherDescriptionOutput" styleClass="label" />
+        </VBox>
+    </GridPane>
 </GridPane>

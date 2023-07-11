@@ -20,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -58,14 +59,25 @@ public class WeatherApp extends Application implements Initializable {
     @FXML
     private ProgressBar progressBar;
 
+    // Declare ImageView for weather icon
+    @FXML
+    private ImageView weatherIcon;
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
         loadProperties();
         Parent root = FXMLLoader.load(getClass().getResource("/weather_app.fxml"));
-        Scene scene = new Scene(root, 400, 200);
+        Scene scene = new Scene(root, 800, 600);  // changed size to fit information nicely
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         Image icon = new Image(getClass().getResourceAsStream("/WeatherApp-logos.jpeg"));
-        primaryStage.getIcons().add(icon); 
+        primaryStage.getIcons().add(icon);
+        
+        // Set the properties of the primaryStage
+        primaryStage.setMinHeight(400);
+        primaryStage.setMinWidth(350);
+        primaryStage.setMaxHeight(400);
+        primaryStage.setMaxWidth(350);
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -95,11 +107,6 @@ public class WeatherApp extends Application implements Initializable {
         getWeather(url);
     }
 
-    public static void getWeatherByCoordinates(String lat, String lon) throws IOException {
-        String url = String.format("http://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&units=metric&appid=%s", lat, lon, API_KEY);
-        getWeather(url);
-    }
-
     public void getWeather(String url) throws IOException {
         CloseableHttpClient client = HttpClients.createDefault();
         HttpGet request = new HttpGet(url);
@@ -120,15 +127,20 @@ public class WeatherApp extends Application implements Initializable {
             JSONObject sys = (JSONObject) jsonObject.get("sys");
             JSONArray weatherArray = (JSONArray) jsonObject.get("weather");
             JSONObject weather = (JSONObject) weatherArray.get(0);
+            String iconId = (String) weather.get("icon");
 
             // Update the labels with the fetched information
-            temperatureOutput.setText("Temperature: " + main.get("temp").toString());
-            humidityOutput.setText("Humidity: " + main.get("humidity").toString());
-            pressureOutput.setText("Pressure: " + main.get("pressure").toString());
-            windSpeedOutput.setText("Wind Speed: " + wind.get("speed").toString());
-            sunriseOutput.setText("Sunrise: " + sys.get("sunrise").toString());
-            sunsetOutput.setText("Sunset: " + sys.get("sunset").toString());
-            weatherDescriptionOutput.setText("Weather: " + weather.get("description").toString());
+            temperatureOutput.setText(main.get("temp").toString());
+            humidityOutput.setText(main.get("humidity").toString());
+            pressureOutput.setText( main.get("pressure").toString());
+            windSpeedOutput.setText(wind.get("speed").toString());
+            sunriseOutput.setText(sys.get("sunrise").toString());
+            sunsetOutput.setText(sys.get("sunset").toString());
+            weatherDescriptionOutput.setText(weather.get("description").toString());
+
+            // Set the image for the ImageView
+            Image image = new Image("http://openweathermap.org/img/wn/" + iconId + ".png");
+            weatherIcon.setImage(image);
 
         } catch (ParseException e) {
             System.out.println("An error occurred while parsing the API response. Please try again.");
@@ -149,8 +161,6 @@ public class WeatherApp extends Application implements Initializable {
 
         timeline.setCycleCount(1);
         timeline.play();
-
-        // your current logic goes here
         try {
             progressBar.setVisible(true);
             getWeatherByCityName(cityInput.getText());

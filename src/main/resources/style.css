@@ -1,6 +1,6 @@
 .root {
     -fx-font-family: "Arial";
-    -fx-background-color: #F4F4F4;
+    -fx-background-color: linear-gradient(to bottom, #89CFF0, #0077BE);
 }
 
 .text-field {

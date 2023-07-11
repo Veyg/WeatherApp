@@ -3,6 +3,9 @@ package com.weatherapp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -23,6 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -35,13 +39,13 @@ import org.json.simple.parser.ParseException;
 
 public class WeatherApp extends Application implements Initializable {
     private static String API_KEY;
-    
+
     @FXML
     private TextField cityInput;
-    
+
     @FXML
     private Button fetchButton;
-    
+
     @FXML
     private Label temperatureOutput;
     @FXML
@@ -59,10 +63,9 @@ public class WeatherApp extends Application implements Initializable {
     @FXML
     private ProgressBar progressBar;
 
-    // Declare ImageView for weather icon
     @FXML
     private ImageView weatherIcon;
-    
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         loadProperties();
@@ -71,7 +74,7 @@ public class WeatherApp extends Application implements Initializable {
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         Image icon = new Image(getClass().getResourceAsStream("/WeatherApp-logos.jpeg"));
         primaryStage.getIcons().add(icon);
-        
+
         // Set the properties of the primaryStage
         primaryStage.setMinHeight(400);
         primaryStage.setMinWidth(350);
@@ -107,6 +110,12 @@ public class WeatherApp extends Application implements Initializable {
         getWeather(url);
     }
 
+    private String convertUnixToReadable(long timestamp) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+                .withZone(ZoneId.systemDefault());
+        return formatter.format(Instant.ofEpochSecond(timestamp));
+    }
+
     public void getWeather(String url) throws IOException {
         CloseableHttpClient client = HttpClients.createDefault();
         HttpGet request = new HttpGet(url);
@@ -130,12 +139,12 @@ public class WeatherApp extends Application implements Initializable {
             String iconId = (String) weather.get("icon");
 
             // Update the labels with the fetched information
-            temperatureOutput.setText(main.get("temp").toString());
-            humidityOutput.setText(main.get("humidity").toString());
-            pressureOutput.setText( main.get("pressure").toString());
-            windSpeedOutput.setText(wind.get("speed").toString());
-            sunriseOutput.setText(sys.get("sunrise").toString());
-            sunsetOutput.setText(sys.get("sunset").toString());
+            temperatureOutput.setText(String.format("%.1f °C", Float.parseFloat(main.get("temp").toString())));
+            humidityOutput.setText(String.format("%s %%", main.get("humidity").toString()));
+            pressureOutput.setText(String.format("%s hPa", main.get("pressure").toString()));
+            windSpeedOutput.setText(String.format("%.1f m/s", Float.parseFloat(wind.get("speed").toString())));            
+            sunriseOutput.setText(convertUnixToReadable(Long.parseLong(sys.get("sunrise").toString())));
+            sunsetOutput.setText(convertUnixToReadable(Long.parseLong(sys.get("sunset").toString())));
             weatherDescriptionOutput.setText(weather.get("description").toString());
 
             // Set the image for the ImageView

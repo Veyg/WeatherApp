@@ -1,0 +1,25 @@
+# WeatherApp
+
+WeatherApp is a simple JavaFX-based application that fetches and displays real-time weather data for any city.
+
+## Features
+- Current temperature in Celsius
+- Current humidity in percentage
+- Current pressure in hPa
+- Current wind speed in m/s
+- Sunrise and sunset times
+- Weather description
+- Weather icon corresponding to the current weather description
+
+## Dependencies
+This project relies on:
+- JavaFX for the UI
+- Apache HttpClient for making API requests
+- JSON.simple for parsing the JSON response
+- OpenWeatherMap API for fetching the weather data
+
+## Running the Application
+You need to have a Java 11+ environment set up on your machine. To run the application, use the following command:
+
+```bash
+java -jar WeatherApp.jar

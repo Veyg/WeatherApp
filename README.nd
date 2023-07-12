@@ -20,6 +20,19 @@ This project relies on:
 
 ## Running the Application
 You need to have a Java 11+ environment set up on your machine. To run the application, use the following command:
+```
+java -jar WeatherApp.jar```
 
-```bash
-java -jar WeatherApp.jar
+
+Please note that the OpenWeatherMap API requires an API key. You can obtain it for free [here](https://openweathermap.org/api). After obtaining the key, put it in a file named `config.properties` and place it in the classpath.
+
+## Future Enhancements
+- Add an option to choose the temperature unit (Celsius or Fahrenheit)
+- Improve error handling and user feedback for invalid city names or network issues
+- Improve the application's visuals and animations
+
+## Contributing
+Contributions to improve this project are welcomed. Please feel free to fork the project and submit a pull request with your changes.
+
+## License
+This project is licensed under the MIT License.
